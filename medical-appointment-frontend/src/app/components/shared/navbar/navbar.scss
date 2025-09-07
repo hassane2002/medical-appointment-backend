@@ -1,0 +1,97 @@
+/* src/app/components/shared/navbar/navbar.component.scss */
+
+/* Palette médicale spéciale navbar */
+:root {
+    --navbar-bg: #0d9cce;      /* Bleu médical clair et rassurant */
+    --navbar-hover: #0b8ab5;   /* Bleu un peu plus sombre au hover */
+    --navbar-accent: #43a047;  /* Vert succès pour accentuer */
+    --navbar-text: #ffffff;    /* Texte blanc pur */
+  }
+  
+  /* Toolbar principale */
+  mat-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--navbar-bg);
+    color: var(--navbar-text);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(13, 156, 206, 0.25); /* Ombre bleutée */
+  }
+  
+  /* Titre/logo */
+  mat-toolbar-row > span:first-child {
+    font-size: 1.4rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.5px;
+    color: var(--navbar-text);
+  }
+  
+  /* Espace flexible */
+  .example-spacer {
+    flex: 1 1 auto;
+  }
+  
+  /* Boutons */
+  button {
+    margin-left: 12px;
+    border-radius: 6px;
+    text-transform: none;
+    font-weight: 500;
+    color: var(--navbar-text);
+    transition: all 0.3s ease;
+  }
+  
+  button mat-icon {
+    margin-right: 6px;
+    font-size: 20px;
+    vertical-align: middle;
+    color: var(--navbar-text);
+  }
+  
+  /* Hover boutons */
+  button:hover {
+    background: var(--navbar-hover);
+    transform: translateY(-2px);
+  }
+  button:hover mat-icon {
+    color: var(--navbar-accent);
+  }
+  
+  /* Boutons spéciaux (login/register) */
+  button[color="accent"] {
+    background: var(--navbar-accent);
+    color: white;
+  }
+  button[color="accent"]:hover {
+    background: #388e3c;
+  }
+  
+  button[color="warn"] {
+    background: #e53935;
+    color: white;
+  }
+  button[color="warn"]:hover {
+    background: #c62828;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    mat-toolbar-row {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
+    }
+  
+    button {
+      margin: 6px 0 0 0;
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+  

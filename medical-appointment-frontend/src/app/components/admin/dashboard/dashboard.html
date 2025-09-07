@@ -1,0 +1,190 @@
+<div class="admin-dashboard">
+  
+    <!-- Header -->
+    <mat-card class="welcome-card">
+      <mat-card-header>
+        <mat-card-title>Tableau de bord Administrateur</mat-card-title>
+        <mat-card-subtitle>Gestion et supervision de la plateforme</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  
+    <!-- Statistiques globales -->
+    <div class="stats-grid">
+      <mat-card class="stat-card users">
+        <div class="stat-content">
+          <mat-icon>people</mat-icon>
+          <div class="stat-info">
+            <h2>{{ statistics.totalUsers }}</h2>
+            <p>Utilisateurs totaux</p>
+            <small>{{ statistics.totalPatients }} patients • {{ statistics.totalDoctors }} médecins</small>
+          </div>
+        </div>
+      </mat-card>
+  
+      <mat-card class="stat-card appointments">
+        <div class="stat-content">
+          <mat-icon>event</mat-icon>
+          <div class="stat-info">
+            <h2>{{ statistics.totalAppointments }}</h2>
+            <p>Rendez-vous totaux</p>
+            <small>{{ statistics.paidAppointments }} payés</small>
+          </div>
+        </div>
+      </mat-card>
+  
+      <mat-card class="stat-card revenue">
+        <div class="stat-content">
+          <mat-icon>attach_money</mat-icon>
+          <div class="stat-info">
+            <h2>{{ formatCurrency(statistics.totalRevenue) }}</h2>
+            <p>Revenus totaux</p>
+            <small>{{ statistics.pendingPayments }} paiements en attente</small>
+          </div>
+        </div>
+      </mat-card>
+  
+      <mat-card class="stat-card receipts">
+        <div class="stat-content">
+          <mat-icon>receipt</mat-icon>
+          <div class="stat-info">
+            <h2>{{ statistics.generatedReceipts }}</h2>
+            <p>Justificatifs générés</p>
+            <small>Format PDF avec QR codes</small>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  
+    <!-- Gestion par onglets -->
+    <mat-card class="management-card">
+      <mat-tab-group>
+        
+        <!-- Gestion des utilisateurs -->
+        <mat-tab label="Utilisateurs ({{ users.length }})">
+          <div class="tab-content">
+            <table mat-table [dataSource]="users" class="users-table">
+              
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Nom</th>
+                <td mat-cell *matCellDef="let user">{{ user.name }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="role">
+                <th mat-header-cell *matHeaderCellDef>Rôle</th>
+                <td mat-cell *matCellDef="let user">
+                  <mat-chip [color]="user.role === 'admin' ? 'warn' : user.role === 'doctor' ? 'primary' : 'accent'" selected>
+                    {{ getRoleLabel(user.role) }}
+                  </mat-chip>
+                </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Statut</th>
+                <td mat-cell *matCellDef="let user">
+                  <mat-chip [color]="user.is_active ? 'accent' : 'warn'" selected>
+                    {{ user.is_active ? 'Actif' : 'Inactif' }}
+                  </mat-chip>
+                </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let user">
+                  <button mat-icon-button *ngIf="!user.is_active" (click)="activateUser(user.id)" title="Activer">
+                    <mat-icon color="primary">check_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button *ngIf="user.is_active" (click)="deactivateUser(user.id)" title="Désactiver">
+                    <mat-icon color="warn">block</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="deleteUser(user.id)" title="Supprimer">
+                    <mat-icon color="warn">delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="usersColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: usersColumns;"></tr>
+            </table>
+          </div>
+        </mat-tab>
+  
+        <!-- Suivi des rendez-vous -->
+        <mat-tab label="Rendez-vous ({{ appointments.length }})">
+          <div class="tab-content">
+            <table mat-table [dataSource]="appointments" class="appointments-table">
+              
+              <ng-container matColumnDef="patient">
+                <th mat-header-cell *matHeaderCellDef>Patient</th>
+                <td mat-cell *matCellDef="let appointment">{{ appointment.patient }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="doctor">
+                <th mat-header-cell *matHeaderCellDef>Médecin</th>
+                <td mat-cell *matCellDef="let appointment">{{ appointment.doctor }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Date</th>
+                <td mat-cell *matCellDef="let appointment">{{ appointment.date | date:'short':'fr' }}</td>
+              </ng-container>
+  
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Statut</th>
+                <td mat-cell *matCellDef="let appointment">
+                  <mat-chip selected>{{ getStatusLabel(appointment.status) }}</mat-chip>
+                </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="payment">
+                <th mat-header-cell *matHeaderCellDef>Paiement</th>
+                <td mat-cell *matCellDef="let appointment">
+                  <mat-chip [color]="appointment.payment_status === 'paid' ? 'accent' : 'warn'" selected>
+                    {{ formatCurrency(appointment.amount) }} - {{ getStatusLabel(appointment.payment_status) }}
+                  </mat-chip>
+                </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="appointmentsColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: appointmentsColumns;"></tr>
+            </table>
+          </div>
+        </mat-tab>
+  
+       <!-- Gestion des spécialités avec actions -->
+<mat-tab label="Spécialités ({{ specialties.length }})">
+    <div class="tab-content">
+      <div class="tab-header">
+        <button mat-raised-button color="primary" (click)="addSpecialty()">
+          <mat-icon>add</mat-icon>
+          Nouvelle spécialité
+        </button>
+      </div>
+      
+      <div class="specialties-grid">
+        <mat-card *ngFor="let specialty of specialties" class="specialty-card">
+          <mat-card-header>
+            <mat-card-title>{{ specialty.name }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ specialty.description }}</p>
+            <p class="price">Prix: {{ formatCurrency(specialty.consultation_price) }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button (click)="editSpecialty(specialty)">
+              <mat-icon>edit</mat-icon>
+              Modifier
+            </button>
+            <button mat-button color="warn" (click)="deleteSpecialtyConfirm(specialty.id)">
+              <mat-icon>delete</mat-icon>
+              Supprimer
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </mat-tab>

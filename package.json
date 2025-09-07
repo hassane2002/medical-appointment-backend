@@ -1,0 +1,28 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@types/jspdf": "^1.3.3",
+        "axios": "^1.1.2",
+        "laravel-vite-plugin": "^0.7.2",
+        "lodash": "^4.17.19",
+        "postcss": "^8.1.14",
+        "vite": "^4.0.0"
+    },
+    "dependencies": {
+        "@angular/animations": "^20.2.3",
+        "@angular/cdk": "^20.2.1",
+        "@angular/common": "^20.2.3",
+        "@angular/forms": "^20.2.3",
+        "@angular/material": "^20.2.1",
+        "@stripe/stripe-js": "^7.9.0",
+        "bootstrap": "^5.3.8",
+        "html2canvas": "^1.4.1",
+        "jspdf": "^3.0.2",
+        "ngx-toastr": "^19.0.0",
+        "rxjs": "^7.8.2"
+    }
+}

@@ -1,0 +1,172 @@
+<!-- src/app/components/patient/appointments-history/appointments-history.html -->
+<div class="history-container">
+  
+    <!-- Header -->
+    <mat-card class="header-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>history</mat-icon>
+          Mes rendez-vous
+        </mat-card-title>
+        <mat-card-subtitle>Historique et gestion de vos consultations</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Chargement de vos rendez-vous...</p>
+    </div>
+  
+    <!-- Tabs par statut -->
+    <mat-card *ngIf="!isLoading" class="appointments-card">
+      <mat-tab-group>
+        
+        <!-- Tous les rendez-vous -->
+        <mat-tab label="Tous ({{ appointments.length }})">
+          <div class="appointments-list">
+            <div *ngFor="let appointment of appointments" class="appointment-item">
+              <div class="appointment-header">
+                <div class="doctor-info">
+                  <h3>{{ appointment.doctor?.user?.first_name }} {{ appointment.doctor?.user?.last_name }}</h3>
+                  <p class="specialty">{{ appointment.doctor?.specialty?.name }}</p>
+                </div>
+                <mat-chip [color]="getStatusColor(appointment.status)" selected>
+                  {{ getStatusLabel(appointment.status) }}
+                </mat-chip>
+              </div>
+              
+              <div class="appointment-details">
+                <div class="detail-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  <span>{{ formatDate(appointment.appointment_date) }}</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ formatTime(appointment.appointment_time) }}</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ appointment.doctor?.cabinet_address || appointment.doctor?.user?.city }}</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>payments</mat-icon>
+                  <span>{{ appointment.payment_amount | number:'1.0-0' }} FCFA - {{ getPaymentStatusLabel(appointment.payment_status) }}</span>
+                </div>
+              </div>
+  
+              <div class="appointment-actions">
+                <button mat-stroked-button 
+                        *ngIf="appointment.status === 'confirmed' || appointment.status === 'completed'"
+                        (click)="downloadReceipt(appointment.id)">
+                  <mat-icon>download</mat-icon>
+                  Justificatif
+                </button>
+                
+                <button mat-stroked-button 
+                        color="warn"
+                        *ngIf="appointment.status === 'pending' || appointment.status === 'confirmed'"
+                        (click)="cancelAppointment(appointment.id)">
+                  <mat-icon>cancel</mat-icon>
+                  Annuler
+                </button>
+              </div>
+            </div>
+  
+            <!-- Message si pas de rendez-vous -->
+            <div *ngIf="appointments.length === 0" class="no-appointments">
+              <mat-icon>event_busy</mat-icon>
+              <h3>Aucun rendez-vous</h3>
+              <p>Vous n'avez pas encore de rendez-vous enregistrés.</p>
+            </div>
+          </div>
+        </mat-tab>
+  
+        <!-- Rendez-vous à venir -->
+        <mat-tab label="À venir ({{ getAppointmentsByStatus('confirmed').length + getAppointmentsByStatus('pending').length }})">
+          <div class="appointments-list">
+            <div *ngFor="let appointment of getAppointmentsByStatus('pending').concat(getAppointmentsByStatus('confirmed'))" class="appointment-item">
+              <div class="appointment-header">
+                <div class="doctor-info">
+                  <h3>{{ appointment.doctor?.user?.first_name }} {{ appointment.doctor?.user?.last_name }}</h3>
+                  <p class="specialty">{{ appointment.doctor?.specialty?.name }}</p>
+                </div>
+                <mat-chip [color]="getStatusColor(appointment.status)" selected>
+                  {{ getStatusLabel(appointment.status) }}
+                </mat-chip>
+              </div>
+              
+              <div class="appointment-details">
+                <div class="detail-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  <span>{{ formatDate(appointment.appointment_date) }}</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ formatTime(appointment.appointment_time) }}</span>
+                </div>
+              </div>
+  
+              <div class="appointment-actions">
+                <button mat-stroked-button color="warn" (click)="cancelAppointment(appointment.id)">
+                  <mat-icon>cancel</mat-icon>
+                  Annuler
+                </button>
+              </div>
+            </div>
+  
+            <div *ngIf="getAppointmentsByStatus('pending').length + getAppointmentsByStatus('confirmed').length === 0" class="no-appointments">
+              <mat-icon>event_available</mat-icon>
+              <h3>Aucun rendez-vous à venir</h3>
+              <p>Vous n'avez pas de rendez-vous programmés.</p>
+            </div>
+          </div>
+        </mat-tab>
+  
+        <!-- Historique -->
+        <mat-tab label="Historique ({{ getAppointmentsByStatus('completed').length + getAppointmentsByStatus('cancelled').length }})">
+          <div class="appointments-list">
+            <div *ngFor="let appointment of getAppointmentsByStatus('completed').concat(getAppointmentsByStatus('cancelled'))" class="appointment-item">
+              <div class="appointment-header">
+                <div class="doctor-info">
+                  <h3>{{ appointment.doctor?.user?.first_name }} {{ appointment.doctor?.user?.last_name }}</h3>
+                  <p class="specialty">{{ appointment.doctor?.specialty?.name }}</p>
+                </div>
+                <mat-chip [color]="getStatusColor(appointment.status)" selected>
+                  {{ getStatusLabel(appointment.status) }}
+                </mat-chip>
+              </div>
+              
+              <div class="appointment-details">
+                <div class="detail-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  <span>{{ formatDate(appointment.appointment_date) }}</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ formatTime(appointment.appointment_time) }}</span>
+                </div>
+              </div>
+  
+              <div class="appointment-actions">
+                <button mat-stroked-button 
+                        *ngIf="appointment.status === 'completed'"
+                        (click)="downloadReceipt(appointment.id)">
+                  <mat-icon>download</mat-icon>
+                  Justificatif
+                </button>
+              </div>
+            </div>
+  
+            <div *ngIf="getAppointmentsByStatus('completed').length + getAppointmentsByStatus('cancelled').length === 0" class="no-appointments">
+              <mat-icon>history</mat-icon>
+              <h3>Aucun historique</h3>
+              <p>Vous n'avez pas encore d'historique de consultations.</p>
+            </div>
+          </div>
+        </mat-tab>
+  
+      </mat-tab-group>
+    </mat-card>
+  
+  </div>

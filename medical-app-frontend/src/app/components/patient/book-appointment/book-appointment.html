@@ -1,0 +1,144 @@
+<!-- src/app/components/patient/book-appointment/book-appointment.html -->
+<div class="booking-container">
+
+    <!-- Header avec informations du médecin -->
+    <mat-card class="doctor-info-card">
+      <mat-card-header>
+        <mat-card-title>Réserver un rendez-vous</mat-card-title>
+        <mat-card-subtitle>avec {{ getDoctorName() }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="doctor-details">
+          <p><mat-icon>medical_services</mat-icon> {{ getDoctorSpecialty() }}</p>
+          <p><mat-icon>location_on</mat-icon> {{ doctor?.cabinet_address || doctor?.user?.city }}</p>
+          <p><mat-icon>phone</mat-icon> {{ doctor?.cabinet_phone || doctor?.user?.phone }}</p>
+          <p class="fee"><mat-icon>payments</mat-icon> {{ getDoctorFee() }} FCFA</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  
+    <!-- Formulaire de réservation -->
+    <mat-card class="booking-form-card">
+      <mat-card-header>
+        <mat-card-title>Détails du rendez-vous</mat-card-title>
+      </mat-card-header>
+  
+      <mat-card-content>
+        <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="booking-form">
+          
+          <!-- Sélection de la date -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Date du rendez-vous</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="appointment_date" [min]="minDate">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="appointmentForm.get('appointment_date')?.hasError('required')">
+              La date est obligatoire
+            </mat-error>
+          </mat-form-field>
+  
+          <!-- Sélection de l'heure -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Heure du rendez-vous</mat-label>
+            <mat-select formControlName="appointment_time" [disabled]="!selectedDate || isLoadingSlots">
+              <mat-option value="" disabled>
+                {{ isLoadingSlots ? 'Chargement des créneaux...' : 'Sélectionnez une heure' }}
+              </mat-option>
+              <mat-option *ngFor="let slot of availableSlots" [value]="slot">
+                {{ slot }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>schedule</mat-icon>
+            <mat-error *ngIf="appointmentForm.get('appointment_time')?.hasError('required')">
+              L'heure est obligatoire
+            </mat-error>
+            <mat-hint *ngIf="selectedDate && !isLoadingSlots && availableSlots.length === 0">
+              Aucun créneau disponible pour cette date
+            </mat-hint>
+          </mat-form-field>
+  
+          <!-- Mode de paiement -->
+          <div class="payment-section">
+            <h3>Mode de paiement</h3>
+            <mat-radio-group formControlName="payment_method" class="payment-options">
+              <mat-radio-button value="cabinet" class="payment-option">
+                <div class="payment-details">
+                  <div class="payment-header">
+                    <mat-icon>store</mat-icon>
+                    <span>Paiement au cabinet</span>
+                  </div>
+                  <p class="payment-description">Payez directement lors de votre consultation</p>
+                </div>
+              </mat-radio-button>
+  
+              <mat-radio-button value="online" class="payment-option">
+                <div class="payment-details">
+                  <div class="payment-header">
+                    <mat-icon>credit_card</mat-icon>
+                    <span>Paiement en ligne</span>
+                  </div>
+                  <p class="payment-description">Payez maintenant par carte bancaire (sécurisé)</p>
+                </div>
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+  
+          <!-- Notes optionnelles -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notes (optionnel)</mat-label>
+            <textarea matInput formControlName="notes" rows="3" 
+                      placeholder="Décrivez brièvement votre motif de consultation..."></textarea>
+            <mat-icon matSuffix>note</mat-icon>
+          </mat-form-field>
+  
+          <!-- Récapitulatif -->
+          <div class="booking-summary" *ngIf="appointmentForm.get('appointment_date')?.value && appointmentForm.get('appointment_time')?.value">
+            <h3>Récapitulatif</h3>
+            <div class="summary-item">
+              <span>Médecin:</span>
+              <span>{{ getDoctorName() }}</span>
+            </div>
+            <div class="summary-item">
+              <span>Spécialité:</span>
+              <span>{{ getDoctorSpecialty() }}</span>
+            </div>
+            <div class="summary-item">
+              <span>Date:</span>
+              <span>{{ appointmentForm.get('appointment_date')?.value | date:'fullDate':'fr' }}</span>
+            </div>
+            <div class="summary-item">
+              <span>Heure:</span>
+              <span>{{ appointmentForm.get('appointment_time')?.value }}</span>
+            </div>
+            <div class="summary-item">
+              <span>Coût:</span>
+              <span class="fee-amount">{{ getDoctorFee() }} FCFA</span>
+            </div>
+            <div class="summary-item">
+              <span>Paiement:</span>
+              <span>{{ appointmentForm.get('payment_method')?.value === 'online' ? 'En ligne' : 'Au cabinet' }}</span>
+            </div>
+          </div>
+  
+          <!-- Boutons d'action -->
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="goBack()" [disabled]="isLoading">
+              <mat-icon>arrow_back</mat-icon>
+              Retour
+            </button>
+  
+            <button mat-raised-button 
+                    color="primary" 
+                    type="submit"
+                    [disabled]="appointmentForm.invalid || isLoading || availableSlots.length === 0">
+              <mat-spinner *ngIf="isLoading" diameter="20" style="margin-right: 10px;"></mat-spinner>
+              <mat-icon *ngIf="!isLoading">event</mat-icon>
+              {{ isLoading ? 'Réservation...' : 'Confirmer le rendez-vous' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  
+  </div>

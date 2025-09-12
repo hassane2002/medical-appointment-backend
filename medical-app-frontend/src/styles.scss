@@ -1,0 +1,93 @@
+/* src/styles.scss */
+
+/* Reset et bases */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  background: #f9fbfc; /* Couleur claire apaisante */
+  color: #2d3a4a;      /* Texte principal sombre */
+}
+
+/* Palette médicale */
+:root {
+  --primary-color: #00897b;   /* Vert turquoise médical */
+  --secondary-color: #00796b; /* Vert plus sombre */
+  --accent-color: #26c6da;    /* Bleu clair confiance */
+  --danger-color: #e53935;    /* Rouge médical (alertes) */
+  --warning-color: #ffb300;   /* Jaune prévention */
+  --success-color: #43a047;   /* Vert validation */
+  --light-bg: #f9fbfc;
+  --dark-text: #2d3a4a;
+}
+
+/* Boutons Material */
+.mat-mdc-button, .mat-mdc-raised-button {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.mat-mdc-button:hover, .mat-mdc-raised-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 137, 123, 0.3);
+}
+
+/* Snackbar personnalisées */
+.success-snackbar {
+  background-color: var(--success-color) !important;
+  color: white !important;
+}
+
+.error-snackbar {
+  background-color: var(--danger-color) !important;
+  color: white !important;
+}
+
+.warning-snackbar {
+  background-color: var(--warning-color) !important;
+  color: white !important;
+}
+
+/* Liens */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--accent-color);
+}
+
+/* Cartes globales */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* Icônes Material */
+.mat-icon {
+  color: var(--primary-color);
+  vertical-align: middle;
+}
+
+/* Spinner */
+.mat-mdc-progress-spinner {
+  display: inline-block;
+  vertical-align: middle;
+  color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px !important;
+  }
+}

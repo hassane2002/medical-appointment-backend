@@ -1,0 +1,114 @@
+/* src/app/components/auth/register/register.scss */
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+  }
+  
+  /* Carte principale */
+  .register-card {
+    width: 100%;
+    max-width: 600px;
+    padding: 25px 30px;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+  
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  /* Titres */
+  mat-card-title {
+    color: #00796b; // vert médical
+    font-size: 26px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  
+  mat-card-subtitle {
+    text-align: center;
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 25px;
+  }
+  
+  /* Formulaire */
+  .form-row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+  }
+  
+  .full-width {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .half-width {
+    flex: 1;
+    margin-bottom: 15px;
+  }
+  
+  input.mat-input-element {
+    border-radius: 8px;
+    background-color: #f0fdf4; // vert très clair
+    padding: 10px;
+    font-size: 15px;
+  }
+  
+  /* Bouton d'inscription */
+  .register-button {
+    margin-top: 20px;
+    height: 48px;
+    font-size: 16px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #00796b 0%, #26a69a 100%);
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  
+    &:hover {
+      background: linear-gradient(135deg, #26a69a 0%, #00796b 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 121, 107, 0.35);
+    }
+  }
+  
+  /* Lien vers login */
+  .login-link {
+    color: #00796b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  
+    &:hover {
+      text-decoration: underline;
+      color: #004d40;
+    }
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .register-container {
+      padding: 10px;
+    }
+  
+    .form-row {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .half-width {
+      width: 100%;
+    }
+  }
+  

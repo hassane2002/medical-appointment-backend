@@ -1,0 +1,63 @@
+<!-- src/app/components/shared/navbar/navbar.component.html -->
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <span>🏥 MedicalCareApp</span>
+    
+      <span class="example-spacer"></span>
+      
+      <!-- Menu patient si connecté -->
+      <ng-container *ngIf="isPatientLoggedIn()">
+        <button mat-button routerLink="/patient/dashboard">
+          <mat-icon>dashboard</mat-icon>
+          Recherche
+        </button>
+        <button mat-button routerLink="/patient/appointments">
+          <mat-icon>history</mat-icon>
+          Mes RDV
+        </button>
+        <button mat-button routerLink="/patient/ai-chat">
+          <mat-icon>smart_toy</mat-icon>
+          Assistant IA
+        </button>
+      </ng-container>
+  
+      <!-- Menu médecin si connecté -->
+      <ng-container *ngIf="isDoctorLoggedIn()">
+        <button mat-button routerLink="/doctor/dashboard">
+          <mat-icon>medical_services</mat-icon>
+          Mes Patients
+        </button>
+        <button mat-button routerLink="/doctor/schedule">
+          <mat-icon>schedule</mat-icon>
+          Planning
+        </button>
+      </ng-container>
+
+      <!-- Menu admin si connecté -->
+<ng-container *ngIf="isAdminLoggedIn()">
+    <button mat-button routerLink="/admin/dashboard">
+      <mat-icon>admin_panel_settings</mat-icon>
+      Administration
+    </button>
+  </ng-container>
+      
+      <!-- Boutons de connexion si pas connecté -->
+      <ng-container *ngIf="!isLoggedIn()">
+        <button mat-raised-button color="accent" routerLink="/auth/login">
+          <mat-icon>person</mat-icon>
+          Se connecter
+        </button>
+        
+        <button mat-raised-button color="warn" style="margin-left: 10px;" routerLink="/auth/register">
+          <mat-icon>person_add</mat-icon>
+          S'inscrire
+        </button>
+      </ng-container>
+      
+      <!-- Bouton de déconnexion si connecté -->
+      <button mat-button *ngIf="isLoggedIn()" (click)="logout()" style="margin-left: 10px;">
+        <mat-icon>logout</mat-icon>
+        Déconnexion
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>

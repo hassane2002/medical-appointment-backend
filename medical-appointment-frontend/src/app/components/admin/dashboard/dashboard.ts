@@ -73,14 +73,14 @@ export class AdminDashboardComponent implements OnInit {
   loadStatistics() {
     // Simulation des statistiques - à remplacer par vraies API
     this.statistics = {
-      totalUsers: 156,
-      totalPatients: 120,
+      totalUsers: 15,
+      totalPatients: 12,
       totalDoctors: 32,
-      totalAppointments: 847,
-      totalRevenue: 15750000,
-      paidAppointments: 623,
-      pendingPayments: 45,
-      generatedReceipts: 580
+      totalAppointments: 13,
+      totalRevenue: 875000,
+      paidAppointments: 124,
+      pendingPayments: 25,
+      generatedReceipts: 10
     };
   }
 

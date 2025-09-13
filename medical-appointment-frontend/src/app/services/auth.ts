@@ -67,7 +67,7 @@ export class AuthService {
     const token = this.getToken();
     if (token) {
       // TODO: Valider le token avec l'API
-      // Pour l'instant, on simule un utilisateur connecté
+    
       const userData = localStorage.getItem('user');
       if (userData) {
         this.currentUserSubject.next(JSON.parse(userData));
